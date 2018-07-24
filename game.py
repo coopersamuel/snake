@@ -1,16 +1,12 @@
 import curses
 import time
+import snake
+import utils
 
 class Game:
     def __init__(self, screen):
         self.screen = screen
         self.gameover = False
-
-    def draw_tile(self, x, y, tile=''):
-        self.screen.addstr(y, x, tile)
-
-    def draw_map(self):
-        self.screen.border(0)
 
     def get_input(self):
         # Make stdscr.getch non-blocking
@@ -23,34 +19,32 @@ class Game:
             
         # Return a direction for the snake to start moving in
         if input == curses.KEY_DOWN:
-            return 'down'
-            #return (0, 1)
+            return (0, 1)
         elif input == curses.KEY_UP:
-            return 'up'
-            #return (0, -1)
-        # elif input == curses.KEY_LEFT:
-        #     #return (1, 0)
-        # elif input == curses.KEY_RIGHT:
-        #     #return (-1, 0)
-        # elif input == ord('q'):
-        #     #return 'q'
+            return (0, -1)
+        elif input == curses.KEY_LEFT:
+            return (-1, 0)
+        elif input == curses.KEY_RIGHT:
+            return (1, 0)
 
     def gameloop(self):
-        counter = 0
-        maxyx = self.screen.getmaxyx()
-        center = (int(maxyx[1] / 2), int(maxyx[0] / 2))
-        direction = 'up'
+        gameSnake = snake.Snake(self.screen)
 
         while not self.gameover:
-            self.draw_map()
-            input = self.get_input() 
-            direction = input if input else direction
+            self.screen.border(0) # Draw the map
+            direction = self.get_input() # Get user input
+            
+            if direction:
+                # Only change direction if the user has given input
+                gameSnake.change_direction(direction)
 
-            if direction == 'up':
-                counter += 1
-                self.draw_tile(center[0], center[1], str(counter))
-            elif direction == 'down':
-                counter -= 1
-                self.draw_tile(center[0], center[1], str(counter))
+            gameSnake.move_snake()
+            gameSnake.render_snake()
+            # if direction == 'up':
+            #     counter += 1
+            #     utils.draw_tile(self.screen, center[0], center[1], str(counter))
+            # elif direction == 'down':
+            #     counter -= 1
+            #     utils.draw_tile(self.screen, center[0], center[1], str(counter))
 
-            time.sleep(.3)
+            time.sleep(.1) # This slows down the game speed
