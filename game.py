@@ -10,6 +10,7 @@ class Game:
         self.playing = True
         self.score = 0
         self.highScore = 0
+        self.title = True
 
     def get_input(self):
         # Make stdscr.getch non-blocking
@@ -47,7 +48,7 @@ class Game:
                 self.spawn_apple()
 
     def draw_apple(self):
-        utils.draw_tile(self.screen, self.appleLocation[0], self.appleLocation[1], '&')
+        utils.draw_tile(self.screen, self.appleLocation[0], self.appleLocation[1], '&', curses.color_pair(3))
 
     def eat_apple(self):
         if self.gameSnake.get_snake_location() == self.appleLocation:
@@ -69,21 +70,31 @@ class Game:
 
         return False
 
+    def draw_title(self):
+        maxyx = self.screen.getmaxyx()
+        center = (int(maxyx[1] / 2), int(maxyx[0] / 2))
+
+        utils.draw_tile(self.screen, center[0] - 12, center[1] - 5, ' __                  ___ ', curses.color_pair(4))
+        utils.draw_tile(self.screen, center[0] - 12, center[1] - 4, '/__` |\ |  /\  |__/ |__  ', curses.color_pair(4))
+        utils.draw_tile(self.screen, center[0] - 12, center[1] - 3, '.__/ | \| /~~\ |  \ |___ ', curses.color_pair(4))
+        utils.draw_tile(self.screen, center[0] - 7, center[1] + 1, 'Space to start', curses.color_pair(1))
+
     def draw_gameover(self):
         maxyx = self.screen.getmaxyx()
         center = (int(maxyx[1] / 2), int(maxyx[0] / 2))
 
-        utils.draw_tile(self.screen, center[0] - 22, center[1] - 5, ' __              ___     __        ___  __  ')
-        utils.draw_tile(self.screen, center[0] - 22, center[1] - 4, '/ _`  /\   |\/| |__     /  \ \  / |__  |__) ')
-        utils.draw_tile(self.screen, center[0] - 22, center[1] - 3, '\__> /~~\  |  | |___    \__/  \/  |___ |  \ ')
-        utils.draw_tile(self.screen, center[0] - 14, center[1] + 2, 'Space to restart, Q to quit')
+        utils.draw_tile(self.screen, center[0] - 22, center[1] - 5, ' __              ___     __        ___  __  ', curses.color_pair(3))
+        utils.draw_tile(self.screen, center[0] - 22, center[1] - 4, '/ _`  /\   |\/| |__     /  \ \  / |__  |__) ', curses.color_pair(3))
+        utils.draw_tile(self.screen, center[0] - 22, center[1] - 3, '\__> /~~\  |  | |___    \__/  \/  |___ |  \ ', curses.color_pair(3))
+        utils.draw_tile(self.screen, center[0] - 14, center[1] + 2, 'Space to restart, Q to quit', curses.color_pair(1))
 
     def draw_map(self):
         #self.screen.border(0) # Draw the map
-        utils.draw_tile(self.screen, 5, 0, ' Score: %s ' %self.score)
-        utils.draw_tile(self.screen, 20, 0, ' High Score: %s ' %self.highScore)
+        utils.draw_tile(self.screen, 5, 0, ' Score: %s ' %self.score, curses.color_pair(1))
+        utils.draw_tile(self.screen, 20, 0, ' High Score: %s ' %self.highScore, curses.color_pair(1))
 
     def reset(self):
+        self.title = False
         self.score = 0
         self.spawn_apple()
         self.gameSnake = snake.Snake(self.screen)
@@ -93,14 +104,16 @@ class Game:
         self.spawn_apple()
 
         while self.playing:
-            self.draw_map()
             direction = self.get_input() # Get user input
             
             if direction:
                 # Only change direction if the user has given input
                 self.gameSnake.change_direction(direction)
 
-            if not self.has_border_collision() and not self.gameSnake.has_snake_collision():
+            if self.title:
+                self.draw_title()
+            elif not self.has_border_collision() and not self.gameSnake.has_snake_collision():
+                self.draw_map()
                 self.gameSnake.move_snake()
                 self.eat_apple()
                 self.draw_apple()
@@ -108,4 +121,4 @@ class Game:
             else:
                 self.draw_gameover()
 
-            time.sleep(.1) # This slows down the game speed
+            time.sleep(.075) # This slows down the game speed

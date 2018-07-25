@@ -1,4 +1,4 @@
 import curses
 
-def draw_tile(screen, x, y, tile=''):
-        screen.addstr(y, x, tile)
+def draw_tile(screen, x, y, tile='', color=None):
+        screen.addstr(y, x, tile, color)

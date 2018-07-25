@@ -1,4 +1,5 @@
 import utils
+import curses
 
 class Snake():
     def __init__(self, screen):
@@ -49,8 +50,11 @@ class Snake():
         return self.snake[0]
 
     def render_snake(self):
-        for segment in self.snake:
-            utils.draw_tile(self.screen, segment[0], segment[1], 'o')
+        for index, segment in enumerate(self.snake):
+            if index == 0:
+                utils.draw_tile(self.screen, segment[0], segment[1], '0', curses.color_pair(4))
+            else:
+                utils.draw_tile(self.screen, segment[0], segment[1], '=', curses.color_pair(4))
 
     def change_direction(self, direction):
         if not direction:
