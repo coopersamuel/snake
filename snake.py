@@ -33,6 +33,14 @@ class Snake():
         targetCell = tuple(map(lambda x, y: x + y, self.snake[0], self.direction))
         self.snake.insert(0, targetCell)
 
+    def has_snake_collision(self):
+        snakeLocation = self.get_snake_location()
+        for index, segment in enumerate(self.snake):
+            if index > 0 and snakeLocation == segment:
+                return True
+
+        return False
+
     def grow_snake(self):
         # When food is eaten, set grow to True
         self.grow = True

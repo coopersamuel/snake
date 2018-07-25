@@ -7,7 +7,7 @@ from random import randint
 class Game:
     def __init__(self, screen):
         self.screen = screen
-        self.gameover = False
+        self.playing = True
 
     def get_input(self):
         # Make stdscr.getch non-blocking
@@ -27,6 +27,10 @@ class Game:
             return (-1, 0)
         elif input == curses.KEY_RIGHT:
             return (1, 0)
+        elif input == ord(' '):
+            self.reset()
+        elif input == ord('q'):
+            self.playing = False
 
     def spawn_apple(self):
         maxY, maxX = self.screen.getmaxyx()
@@ -41,29 +45,51 @@ class Game:
     def draw_apple(self):
         utils.draw_tile(self.screen, self.appleLocation[0], self.appleLocation[1], '&')
 
-    def eat_apple(self, snake):
-        if snake.get_snake_location() == self.appleLocation:
+    def eat_apple(self):
+        if self.gameSnake.get_snake_location() == self.appleLocation:
             # Apple is eaten
             self.spawn_apple()
-            snake.grow_snake()
+            self.gameSnake.grow_snake()
         else:
             return
 
+    def has_border_collision(self):
+        snakeLocation = self.gameSnake.get_snake_location()
+        maxY, maxX = self.screen.getmaxyx()
+
+        if snakeLocation[0] == 0 or snakeLocation[0] == maxX - 1 or snakeLocation[1] == 0 or snakeLocation[1] == maxY - 1:
+            return True
+
+        return False
+
+    def draw_gameover(self):
+        maxyx = self.screen.getmaxyx()
+        center = (int(maxyx[1] / 2), int(maxyx[0] / 2))
+
+        utils.draw_tile(self.screen, center[0] - 4, center[1], 'Game Over')
+        utils.draw_tile(self.screen, center[0] - 14, center[1] + 2, 'Space to restart, Q to quit')
+
+    def reset(self):
+        self.gameSnake = snake.Snake(self.screen)
+
     def gameloop(self):
-        gameSnake = snake.Snake(self.screen)
+        self.gameSnake = snake.Snake(self.screen)
         self.spawn_apple()
 
-        while not self.gameover:
+        while self.playing:
             self.screen.border(0) # Draw the map
             direction = self.get_input() # Get user input
             
             if direction:
                 # Only change direction if the user has given input
-                gameSnake.change_direction(direction)
+                self.gameSnake.change_direction(direction)
 
-            gameSnake.move_snake()
-            self.eat_apple(gameSnake)
-            self.draw_apple()
-            gameSnake.render_snake()
+            if not self.has_border_collision() and not self.gameSnake.has_snake_collision():
+                self.gameSnake.move_snake()
+                self.eat_apple()
+                self.draw_apple()
+                self.gameSnake.render_snake()
+            else:
+                self.draw_gameover()
 
             time.sleep(.1) # This slows down the game speed
