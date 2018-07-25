@@ -1,7 +1,5 @@
 # snake
 Snake game for the terminal
 
-<video width="320" height="240" controls>
-  <source src="snake.mov" type="video/mp4">
-</video>
+![Alt Text](https://media.giphy.com/media/1wrAIDZ504i4X08u2y/giphy.gif)
 
