@@ -6,8 +6,8 @@ class Snake():
         center = (int(maxyx[1] / 2), int(maxyx[0] / 2))
 
         self.screen = screen    # Will need to keep a reference to the screen here too
-        self.snake = [(center[0], center[1])] # The snake will be an array of positions (x,y) representing the location of each body segment
-                        # The first element in the array is the snake's head
+        self.snake = [(center[0], center[1])]   # The snake will be an array of positions (x,y) representing the location of each body segment
+                                                # The first element in the array is the snake's head
 
         self.grow = True
         self.growCounter = 0
@@ -18,7 +18,7 @@ class Snake():
         if not self.direction:
             return
 
-        if self.growCounter >= 5:
+        if self.growCounter >= 10:
             self.grow = False
             self.growCounter = 0
 

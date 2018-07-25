@@ -8,6 +8,8 @@ class Game:
     def __init__(self, screen):
         self.screen = screen
         self.playing = True
+        self.score = 0
+        self.highScore = 0
 
     def get_input(self):
         # Make stdscr.getch non-blocking
@@ -34,8 +36,8 @@ class Game:
 
     def spawn_apple(self):
         maxY, maxX = self.screen.getmaxyx()
-        x = randint(1, maxX - 1)
-        y = randint(1, maxY - 1)
+        x = randint(1, maxX - 2)
+        y = randint(1, maxY - 2)
         self.appleLocation = (x, y)
 
         for segment in self.gameSnake.snake:
@@ -52,6 +54,9 @@ class Game:
             # Apple is eaten
             self.spawn_apple()
             self.gameSnake.grow_snake()
+            self.score += 1
+            if self.score > self.highScore:
+                self.highScore += 1
         else:
             return
 
@@ -71,7 +76,13 @@ class Game:
         utils.draw_tile(self.screen, center[0] - 4, center[1], 'Game Over')
         utils.draw_tile(self.screen, center[0] - 14, center[1] + 2, 'Space to restart, Q to quit')
 
+    def draw_map(self):
+        self.screen.border(0) # Draw the map
+        utils.draw_tile(self.screen, 5, 0, ' Score: %s ' %self.score)
+        utils.draw_tile(self.screen, 20, 0, ' High Score: %s ' %self.highScore)
+
     def reset(self):
+        self.score = 0
         self.spawn_apple()
         self.gameSnake = snake.Snake(self.screen)
 
@@ -80,7 +91,7 @@ class Game:
         self.spawn_apple()
 
         while self.playing:
-            self.screen.border(0) # Draw the map
+            self.draw_map()
             direction = self.get_input() # Get user input
             
             if direction:
