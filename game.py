@@ -2,6 +2,7 @@ import curses
 import time
 import snake
 import utils
+from random import randint
 
 class Game:
     def __init__(self, screen):
@@ -27,8 +28,30 @@ class Game:
         elif input == curses.KEY_RIGHT:
             return (1, 0)
 
+    def spawn_apple(self):
+        maxY, maxX = self.screen.getmaxyx()
+        x = randint(1, maxX - 1)
+        y = randint(1, maxY - 1)
+        self.appleLocation = (x, y)
+
+        '''
+            TODO - Fix a bug where food won't spawn because it trys to spawn over top of the snake
+        '''
+
+    def draw_apple(self):
+        utils.draw_tile(self.screen, self.appleLocation[0], self.appleLocation[1], '&')
+
+    def eat_apple(self, snake):
+        if snake.get_snake_location() == self.appleLocation:
+            # Apple is eaten
+            self.spawn_apple()
+            snake.grow_snake()
+        else:
+            return
+
     def gameloop(self):
         gameSnake = snake.Snake(self.screen)
+        self.spawn_apple()
 
         while not self.gameover:
             self.screen.border(0) # Draw the map
@@ -39,12 +62,8 @@ class Game:
                 gameSnake.change_direction(direction)
 
             gameSnake.move_snake()
+            self.eat_apple(gameSnake)
+            self.draw_apple()
             gameSnake.render_snake()
-            # if direction == 'up':
-            #     counter += 1
-            #     utils.draw_tile(self.screen, center[0], center[1], str(counter))
-            # elif direction == 'down':
-            #     counter -= 1
-            #     utils.draw_tile(self.screen, center[0], center[1], str(counter))
 
             time.sleep(.1) # This slows down the game speed
