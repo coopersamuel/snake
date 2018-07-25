@@ -7,8 +7,7 @@ Snake game for the terminal
 
 ```
 git clone
-python __main__.py // From the root directory
-// OR
-python snake/   // From the root's parent directory (this is easier)
+cd snake/
+python snake/
 ```
 
