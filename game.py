@@ -38,9 +38,11 @@ class Game:
         y = randint(1, maxY - 1)
         self.appleLocation = (x, y)
 
-        '''
-            TODO - Fix a bug where food won't spawn because it trys to spawn over top of the snake
-        '''
+        for segment in self.gameSnake.snake:
+            if self.appleLocation == segment:
+                # Don't spawn food on top of the snake
+                # If this happens, try again
+                self.spawn_apple()
 
     def draw_apple(self):
         utils.draw_tile(self.screen, self.appleLocation[0], self.appleLocation[1], '&')
@@ -70,6 +72,7 @@ class Game:
         utils.draw_tile(self.screen, center[0] - 14, center[1] + 2, 'Space to restart, Q to quit')
 
     def reset(self):
+        self.spawn_apple()
         self.gameSnake = snake.Snake(self.screen)
 
     def gameloop(self):
