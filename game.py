@@ -73,11 +73,13 @@ class Game:
         maxyx = self.screen.getmaxyx()
         center = (int(maxyx[1] / 2), int(maxyx[0] / 2))
 
-        utils.draw_tile(self.screen, center[0] - 4, center[1], 'Game Over')
+        utils.draw_tile(self.screen, center[0] - 22, center[1] - 5, ' __              ___     __        ___  __  ')
+        utils.draw_tile(self.screen, center[0] - 22, center[1] - 4, '/ _`  /\   |\/| |__     /  \ \  / |__  |__) ')
+        utils.draw_tile(self.screen, center[0] - 22, center[1] - 3, '\__> /~~\  |  | |___    \__/  \/  |___ |  \ ')
         utils.draw_tile(self.screen, center[0] - 14, center[1] + 2, 'Space to restart, Q to quit')
 
     def draw_map(self):
-        self.screen.border(0) # Draw the map
+        #self.screen.border(0) # Draw the map
         utils.draw_tile(self.screen, 5, 0, ' Score: %s ' %self.score)
         utils.draw_tile(self.screen, 20, 0, ' High Score: %s ' %self.highScore)
 
