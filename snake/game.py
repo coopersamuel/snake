@@ -89,7 +89,7 @@ class Game:
         utils.draw_tile(self.screen, center[0] - 14, center[1] + 2, 'Space to restart, Q to quit', curses.color_pair(1))
 
     def draw_map(self):
-        #self.screen.border(0) # Draw the map
+        self.screen.border(0) # Draw the map
         utils.draw_tile(self.screen, 5, 0, ' Score: %s ' %self.score, curses.color_pair(1))
         utils.draw_tile(self.screen, 20, 0, ' High Score: %s ' %self.highScore, curses.color_pair(1))
 
